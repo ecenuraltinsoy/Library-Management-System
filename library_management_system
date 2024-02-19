@@ -1,0 +1,143 @@
+import sys
+class Library:
+
+    def __init__(self):
+        
+        try:
+            self.file_name = "books.txt"
+            self.file = open(self.file_name, "a+")
+            print(self.file_name + "dosyası açıldı.")
+        except:
+            print("Dosya açılırken bir hata oluştu.")
+            
+    def __del__(self):
+
+        try:
+            self.file.close()
+            print("\n" + self.file_name + "dosyası kapatıldı.")
+        except:
+            print("Dosya kapatılırken bir hata oluştu.")
+
+    def list_books(self):
+
+        self.file.seek(0)
+        string = self.file.read()
+
+        if not string:
+            print("\nThere is no book information in the txt file.")
+        else:
+            lines = string.splitlines()
+
+            for line in lines:
+                
+                book_info = line.split(", ")
+            
+                book_title = book_info[0]
+                author_name = book_info[1]
+
+                print("\nBook Name: "+ book_title + ", Author: " + author_name)
+
+    def add_books(self):
+
+        book_title = input("\nBook Name:")
+        book_title = book_title.title()
+
+        while True:
+
+            book_author = input("\nBook Author:")
+
+            if book_author.isdigit():
+                print("Please enter a valid name.")
+            else:
+                book_author = book_author.title()
+                break
+
+        while True:
+
+            first_release_year = input("\nFirst Release Year:")
+
+            if first_release_year.isdigit():
+                break
+            else:
+                print("Please enter a valid year.")
+
+        while True:
+
+            number_of_pages = input("\nNumber of pages:")
+
+            if number_of_pages.isdigit():
+                break
+            else:
+                print("Please enter a valid number of pages.")        
+
+        information_of_book = book_title + ", " + book_author + ", " + first_release_year + ", " + number_of_pages + "\n"
+        self.file.write(information_of_book)
+        print("\nA new book information has been added.")
+    
+    def remove_book(self):
+
+        book_title = input("\nEnter the title of the book to remove: ")
+        book_title = book_title.title()
+
+        self.file.seek(0)
+        string = self.file.read()
+
+        if not string:
+            print("\nThere is no book information in the txt file.")
+
+        else:
+            lines = string.splitlines()
+            found = False
+            
+            for index, line in enumerate(lines):
+                name = line.split(",")[0].strip()
+
+                if name == book_title:
+
+                    found = True
+                    lines.pop(index)
+                    print("\nThe book "+ book_title + " has been removed.")
+                    break
+            if not found:
+                print("\nThe book with title "+ book_title + " is not found.")
+
+        self.file.seek(0)
+        self.file.truncate()
+
+        for book_info in lines:
+            self.file.write(book_info + "\n")
+
+
+print("""*** MENU***
+      
+1) List Books
+2) Add Book
+3) Remove Book
+""")
+
+lib = Library()
+step = input("\nWhich step would you like to continue with? Please enter a number:")
+
+while True:
+
+    if step.isdigit():
+
+        step = int(step)
+
+        if step == 1:
+            lib.list_books()
+        elif step == 2:
+            lib.add_books()
+        elif step == 3:
+            lib.remove_book()
+        else:
+            step = input("Invalid input. Please enter a number (1, 2, 3). Try again!")
+        step = input("\nWhich step would you like to continue with? Please enter a number:")
+
+    elif step.lower() == "q":
+        sys.exit()
+
+    else:
+        print("Invalid input. Please enter a number (1, 2, 3) or 'q'. Try again!")
+
+    
